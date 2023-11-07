@@ -1,12 +1,14 @@
+package ui;
+
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.control.Button;
 
-public class Window extends Application {
+
+public class MainWindow extends Application {
 
 
     @Override
@@ -17,7 +19,11 @@ public class Window extends Application {
 
         Text text = new Text(10, 10, "hello world");
 
-        root.getChildren().add(text);
+        Button btn = new Button("cc");
+
+        root.getChildren().addAll(btn, text);
+
+
 
 
         stage.setScene(scene);
