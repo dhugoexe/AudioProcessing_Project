@@ -2,18 +2,32 @@ package audio;
 
 import javax.sound.sampled.*;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** A collection of static utilities related to the audio system. */
 public class AudioIO {
     /**
      * Displays every audio mixer available on the current system.
+     *
+     * @return
      */
-    public static void printAudioMixers() {
+    public static Object printAudioMixers() {
         System.out.println("Mixers:");
         Arrays.stream(AudioSystem.getMixerInfo())
                 .forEach(e -> System.out.println("- name=\"" + e.getName()
                         + "\" description=\"" + e.getDescription() + " by " + e.getVendor() + "\""));
+        return null;
     }
+
+    public static List<String> getAudioMixers() {
+        System.out.println("Mixers:");
+        List<String> mixers = Arrays.stream(AudioSystem.getMixerInfo())
+                .map(e -> e.getDescription() + " by " + e.getVendor())
+                .collect(Collectors.toList());
+        return mixers;
+    }
+
 
     /**
      * @return a Mixer.Info whose name matches the given string. Example of use: getMixerInfo("Macbook default output")
@@ -48,13 +62,22 @@ public class AudioIO {
     /**
      * Return a line that's appropriate for playing sound to a loudspeaker.
      */
-    public static SourceDataLine obtainAudioOutput(String mixerName, int sampleRate) {
-        return null;
+    public static SourceDataLine obtainAudioOutput(String mixerName, int sampleRate) throws LineUnavailableException {
+        AudioFormat format = new AudioFormat(sampleRate, 8, 1, true, true);
+        try {
+            return (SourceDataLine) AudioSystem.getSourceDataLine(format, getMixerInfo(mixerName));
+        }catch (LineUnavailableException exception)
+        {
+            System.out.println(exception);
+            return null;
+        }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws LineUnavailableException {
 
         printAudioMixers();
+        TargetDataLine targetDataLine = obtainAudioInput("Port MacBook Air Microphone", 8000);
+        SourceDataLine dataLine = obtainAudioOutput("Port MacBook Air Speakers", 8000);
     }
 
 }
