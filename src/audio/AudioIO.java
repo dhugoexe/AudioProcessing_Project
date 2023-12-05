@@ -23,7 +23,7 @@ public class AudioIO {
     public static List<String> getAudioMixers() {
         System.out.println("Mixers:");
         List<String> mixers = Arrays.stream(AudioSystem.getMixerInfo())
-                .map(e -> e.getDescription() + " by " + e.getVendor())
+                .map(e -> e.getName())
                 .collect(Collectors.toList());
         return mixers;
     }
@@ -72,6 +72,8 @@ public class AudioIO {
             return null;
         }
     }
+
+
 
     public static void main(String[] args) throws LineUnavailableException {
 

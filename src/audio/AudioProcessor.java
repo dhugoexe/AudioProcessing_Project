@@ -39,9 +39,10 @@ public class AudioProcessor implements Runnable {
         isThreadRunning = true;
         while (isThreadRunning) {
             inputSignal.recordFrom(audioInput);
-// your job: copy inputSignal to outputsignal with some audio effect
-            outputSignal.playTo(audioOutput);
+            inputSignal.playTo(audioOutput);
         }
+        inputSignal = outputSignal;
+        outputSignal.playTo(audioOutput);
     }
 
     /* Tells the thread loop to break as soon as possible. This is an asynchronous process. */
@@ -89,6 +90,37 @@ public class AudioProcessor implements Runnable {
         isThreadRunning = threadRunning;
     }
 
+    public void test(String in, String out, int sampleRate) throws LineUnavailableException {
+
+        TargetDataLine inLine = AudioIO.obtainAudioInput(in, sampleRate);
+        SourceDataLine outLine = AudioIO.obtainAudioOutput(out, sampleRate);
+
+        AudioProcessor as = new AudioProcessor(inLine, outLine, 1024);
+
+        inLine.open();
+        inLine.start();
+
+        outLine.open();
+        outLine.start();
+        new Thread(as).start();
+        System.out.println("A new thread has been created!");
+
+    }
+
+    public static void starting(String in, String out, int sampleRate, int frameSize) throws LineUnavailableException {
+        TargetDataLine inLine = AudioIO.obtainAudioInput(in, sampleRate);
+        SourceDataLine outLine = AudioIO.obtainAudioOutput(out, sampleRate);
+        AudioProcessor as = new AudioProcessor(inLine, outLine, frameSize);
+        inLine.open();
+        inLine.start();
+
+        outLine.open();
+        outLine.start();
+        new Thread(as).start();
+        System.out.println("A new thread has been created!");
+
+    }
+
 
     /* an example of a possible test code */
     public static void main(String[] args) throws LineUnavailableException {
@@ -98,13 +130,10 @@ public class AudioProcessor implements Runnable {
         inLine.open();
         inLine.start();
 
-        inLine.close();
-
         outLine.open();
         outLine.start();
         new Thread(as).start();
         System.out.println("A new thread has been created!");
-
 
     }
 }
